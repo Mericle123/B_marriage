@@ -11,7 +11,7 @@ const CreateCertificate = ({ setCertificateData }) => {
     wifeName: '',
     wifeAddress: '',
     wifeDOB: '',
-    wifeCID: ''
+    wifeCID: '',
   });
 
   const navigate = useNavigate();
@@ -27,29 +27,143 @@ const CreateCertificate = ({ setCertificateData }) => {
   };
 
   return (
-    <div>
+    <div className="min-h-screen bg-gradient-to-r from-pink-100 to-yellow-50">
       <UserNavbar />
-      <div className="p-6">
-        <h2 className="text-2xl font-bold mb-4">Create Marriage Certificate</h2>
-        <form onSubmit={handleSubmit} className="bg-gray-100 p-6 rounded">
-          {/* Husband's Information */}
-          <h3 className="text-xl font-semibold mb-2">Husband's Information</h3>
-          <input name="husbandName" type="text" placeholder="Husband Name" onChange={handleChange} className="border p-2 mb-2 w-full" required />
-          <input name="husbandAddress" type="text" placeholder="Husband Address" onChange={handleChange} className="border p-2 mb-2 w-full" required />
-          <input name="husbandDOB" type="date" onChange={handleChange} className="border p-2 mb-2 w-full" required />
-          <input name="husbandCID" type="text" placeholder="Husband CID" onChange={handleChange} className="border p-2 mb-2 w-full" required />
-          
-          {/* Wife's Information */}
-          <h3 className="text-xl font-semibold mb-2">Wife's Information</h3>
-          <input name="wifeName" type="text" placeholder="Wife Name" onChange={handleChange} className="border p-2 mb-2 w-full" required />
-          <input name="wifeAddress" type="text" placeholder="Wife Address" onChange={handleChange} className="border p-2 mb-2 w-full" required />
-          <input name="wifeDOB" type="date" onChange={handleChange} className="border p-2 mb-2 w-full" required />
-          <input name="wifeCID" type="text" placeholder="Wife CID" onChange={handleChange} className="border p-2 mb-2 w-full" required />
+      <div className="container mx-auto p-8">
+        <h1 className="text-3xl font-bold text-center text-pink-600 mb-6">
+          Create Marriage Certificate
+        </h1>
+        <p className="text-gray-600 text-center mb-6">
+          Fill in the details below to generate your marriage certificate.
+        </p>
+        <div className="bg-white shadow-lg rounded-lg p-8">
+          <form onSubmit={handleSubmit}>
+            {/* Husband's Information */}
+            <h3 className="text-xl font-semibold text-pink-600 mb-4">
+              Husband's Information
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-gray-700 font-medium mb-1">
+                  Name
+                </label>
+                <input
+                  name="husbandName"
+                  type="text"
+                  placeholder="Husband Name"
+                  onChange={handleChange}
+                  className="border p-3 w-full rounded focus:ring focus:ring-pink-300"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700 font-medium mb-1">
+                  Address
+                </label>
+                <input
+                  name="husbandAddress"
+                  type="text"
+                  placeholder="Husband Address"
+                  onChange={handleChange}
+                  className="border p-3 w-full rounded focus:ring focus:ring-pink-300"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700 font-medium mb-1">
+                  Date of Birth
+                </label>
+                <input
+                  name="husbandDOB"
+                  type="date"
+                  onChange={handleChange}
+                  className="border p-3 w-full rounded focus:ring focus:ring-pink-300"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700 font-medium mb-1">
+                  CID
+                </label>
+                <input
+                  name="husbandCID"
+                  type="text"
+                  placeholder="Husband CID"
+                  onChange={handleChange}
+                  className="border p-3 w-full rounded focus:ring focus:ring-pink-300"
+                  required
+                />
+              </div>
+            </div>
 
-          <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded transition duration-300 hover:bg-blue-600">
-            Apply
-          </button>
-        </form>
+            {/* Wife's Information */}
+            <h3 className="text-xl font-semibold text-pink-600 mt-8 mb-4">
+              Wife's Information
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-gray-700 font-medium mb-1">
+                  Name
+                </label>
+                <input
+                  name="wifeName"
+                  type="text"
+                  placeholder="Wife Name"
+                  onChange={handleChange}
+                  className="border p-3 w-full rounded focus:ring focus:ring-pink-300"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700 font-medium mb-1">
+                  Address
+                </label>
+                <input
+                  name="wifeAddress"
+                  type="text"
+                  placeholder="Wife Address"
+                  onChange={handleChange}
+                  className="border p-3 w-full rounded focus:ring focus:ring-pink-300"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700 font-medium mb-1">
+                  Date of Birth
+                </label>
+                <input
+                  name="wifeDOB"
+                  type="date"
+                  onChange={handleChange}
+                  className="border p-3 w-full rounded focus:ring focus:ring-pink-300"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700 font-medium mb-1">
+                  CID
+                </label>
+                <input
+                  name="wifeCID"
+                  type="text"
+                  placeholder="Wife CID"
+                  onChange={handleChange}
+                  className="border p-3 w-full rounded focus:ring focus:ring-pink-300"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="mt-8 text-center">
+              <button
+                type="submit"
+                className="bg-pink-600 text-white font-bold px-6 py-3 rounded-lg hover:bg-pink-700 transition duration-300"
+              >
+                Submit Application
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

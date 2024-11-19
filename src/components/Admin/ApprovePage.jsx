@@ -28,6 +28,7 @@ const ApprovePage = () => {
 
   return (
     <div>
+      <div className="min-h-screen bg-gradient-to-r from-blue-100 to-gray-100">
       <AdminNavbar />
       <div className="p-6 flex justify-center">
         <div className="w-full max-w-3xl bg-white shadow-lg rounded-lg p-6">
@@ -67,6 +68,7 @@ const ApprovePage = () => {
           )}
         </div>
       </div>
+    </div>
     </div>
   );
 };
