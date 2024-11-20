@@ -1,18 +1,24 @@
-import UserNavbar from './UserNavbar';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import UserNavbar from "./UserNavbar";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify"; // Import Toastify
+import "react-toastify/dist/ReactToastify.css"; // Import Toastify CSS
 
-const CreateCertificate = ({ setCertificateData }) => {
+const CreateCertificate = () => {
   const [formData, setFormData] = useState({
-    husbandName: '',
-    husbandAddress: '',
-    husbandDOB: '',
-    husbandCID: '',
-    wifeName: '',
-    wifeAddress: '',
-    wifeDOB: '',
-    wifeCID: '',
+    husbandName: "",
+    husbandAddress: "",
+    husbandDOB: "",
+    husbandCID: "",
+    wifeName: "",
+    wifeAddress: "",
+    wifeDOB: "",
+    wifeCID: "",
+    approvalAuthority: "0x27c68FEdCB4A9D331cf41a7b8aacc97a90Bc12eDe", // Pre-defined approval authority value
   });
+
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -20,10 +26,76 @@ const CreateCertificate = ({ setCertificateData }) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const createCertificate = async () => {
+    setLoading(true);
+
+    const {
+      husbandName,
+      husbandAddress,
+      husbandDOB,
+      husbandCID,
+      wifeName,
+      wifeAddress,
+      wifeDOB,
+      wifeCID,
+      approvalAuthority,
+    } = formData;
+
+    if (
+      !husbandName ||
+      !husbandAddress ||
+      !husbandDOB ||
+      !husbandCID ||
+      !wifeName ||
+      !wifeAddress ||
+      !wifeDOB ||
+      !wifeCID ||
+      !approvalAuthority
+    ) {
+      toast.error("Please fill in all required fields.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "https://chainscholarbackend.onrender.com/api/wedLock/create",
+        {
+          husbandName,
+          husbandAddress,
+          husbandDOB,
+          husbandCID,
+          wifeName,
+          wifeAddress,
+          wifeDOB,
+          wifeCID,
+          approvalAuthority, // Pass the approval authority field
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.data && response.data.status === "success") {
+        toast.success("Marriage certificate created successfully");
+        setTimeout(() => navigate("/user/profile"), 3000); // Redirect after notification
+      } else {
+        toast.error(response.data.message || "Failed to create certificate");
+      }
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "An unexpected error occurred"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    setCertificateData(formData);
-    navigate('/user/profile'); // Redirect to user's profile or confirm submission page
+    createCertificate();
   };
 
   return (
@@ -154,17 +226,38 @@ const CreateCertificate = ({ setCertificateData }) => {
               </div>
             </div>
 
+            {/* Approval Authority */}
+            <h3 className="text-xl font-semibold text-pink-600 mt-8 mb-4">
+              Approval Authority
+            </h3>
+            <div>
+              <label className="block text-gray-700 font-medium mb-1">
+                Authority Address
+              </label>
+              <input
+                name="approvalAuthority"
+                type="text"
+                value={formData.approvalAuthority}
+                readOnly
+                className="border p-3 w-full bg-gray-100 rounded focus:ring focus:ring-pink-300"
+              />
+            </div>
+
             <div className="mt-8 text-center">
               <button
                 type="submit"
                 className="bg-pink-600 text-white font-bold px-6 py-3 rounded-lg hover:bg-pink-700 transition duration-300"
+                disabled={loading}
               >
-                Submit Application
+                {loading ? "Submitting..." : "Submit Application"}
               </button>
             </div>
           </form>
         </div>
       </div>
+
+      {/* Toastify Notification Container */}
+      <ToastContainer position="top-right" autoClose={5000} />
     </div>
   );
 };

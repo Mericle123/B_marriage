@@ -1,66 +1,57 @@
 import { useState, useEffect } from "react";
 import UserNavbar from "./UserNavbar";
 import { Link } from "react-router-dom";
+import Web3 from "web3";
 
 const UserHome = () => {
   const [userAddress, setUserAddress] = useState(null);
   const [ethBalance, setEthBalance] = useState(null);
+  const [web3, setWeb3] = useState(null);
 
-  // Function to request account access from MetaMask
+  // Function to connect wallet and fetch account details
   const connectWallet = async () => {
     if (window.ethereum) {
       try {
-        const accounts = await window.ethereum.request({
-          method: "eth_requestAccounts",
-        });
+        const web3Instance = new Web3(window.ethereum);
+        await window.ethereum.request({ method: "eth_requestAccounts" });
+        const accounts = await web3Instance.eth.getAccounts();
         setUserAddress(accounts[0]);
-        getEthBalance(accounts[0]);
+        setWeb3(web3Instance);
+        fetchEthBalance(accounts[0], web3Instance);
       } catch (error) {
         console.error("Error connecting to MetaMask:", error);
       }
     } else {
-      alert(
-        "MetaMask is not installed. Please install MetaMask to use this feature."
-      );
+      alert("Please install MetaMask to use this feature.");
     }
   };
-
-  // Function to fetch ETH balance
-  const getEthBalance = async (address) => {
-    if (window.ethereum) {
-      try {
-        const balance = await window.ethereum.request({
-          method: "eth_getBalance",
-          params: [address, "latest"],
-        });
-        setEthBalance(
-          parseFloat(window.web3.utils.fromWei(balance, "ether")).toFixed(4)
-        );
-      } catch (error) {
-        console.error("Error fetching ETH balance:", error);
-      }
-    }
-  };
-
   // Automatically connect if MetaMask is already authorized
   useEffect(() => {
     const checkIfWalletIsConnected = async () => {
       if (window.ethereum) {
-        try {
-          const accounts = await window.ethereum.request({
-            method: "eth_accounts",
-          });
-          if (accounts.length > 0) {
-            setUserAddress(accounts[0]);
-            getEthBalance(accounts[0]);
-          }
-        } catch (error) {
-          console.error("Error checking for authorized accounts:", error);
+        const web3Instance = new Web3(window.ethereum);
+        const accounts = await web3Instance.eth.getAccounts();
+        if (accounts.length > 0) {
+          setUserAddress(accounts[0]);
+          setWeb3(web3Instance);
+          fetchEthBalance(accounts[0], web3Instance);
         }
       }
     };
     checkIfWalletIsConnected();
   }, []);
+
+  // Function to fetch ETH balance using Web3
+  const fetchEthBalance = async (address, web3Instance) => {
+    try {
+      const balance = await web3Instance.eth.getBalance(address);
+      setEthBalance(
+        parseFloat(web3Instance.utils.fromWei(balance, "ether")).toFixed(4)
+      );
+    } catch (error) {
+      console.error("Error fetching ETH balance:", error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-pink-100 to-yellow-50">

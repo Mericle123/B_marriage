@@ -1,9 +1,38 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Web3 from "web3"; // Import Web3
 import AdminNavbar from "./AdminNavbar";
 import { FaUserCircle } from "react-icons/fa"; // Icon for the default profile picture
 
-const AdminProfile = ({ address, ethBalance }) => {
+const AdminProfile = () => {
   const [profilePic, setProfilePic] = useState(null);
+  const [address, setAddress] = useState(""); // Store the wallet address
+  const [ethBalance, setEthBalance] = useState(null); // Store the ETH balance
+
+  useEffect(() => {
+    const connectWallet = async () => {
+      // Check if the browser has Ethereum (MetaMask)
+      if (window.ethereum) {
+        const web3 = new Web3(window.ethereum);
+        try {
+          // Request the account address from MetaMask
+          const accounts = await web3.eth.requestAccounts();
+          const walletAddress = accounts[0]; // Get the first wallet address
+          setAddress(walletAddress);
+
+          // Fetch the ETH balance
+          const balance = await web3.eth.getBalance(walletAddress);
+          const balanceInEth = web3.utils.fromWei(balance, "ether"); // Convert from wei to ether
+          setEthBalance(balanceInEth);
+        } catch (error) {
+          console.error("Error connecting to wallet:", error);
+        }
+      } else {
+        console.error("Ethereum wallet not found. Please install MetaMask.");
+      }
+    };
+
+    connectWallet();
+  }, []); // Empty dependency array means this will run once when the component mounts
 
   const handleProfilePicChange = (e) => {
     const file = e.target.files[0];
@@ -24,14 +53,21 @@ const AdminProfile = ({ address, ethBalance }) => {
           {/* Profile Picture Section */}
           <div className="flex flex-col items-center mb-8">
             <div className="relative">
-              <FaUserCircle className="w-32 h-32 text-gray-400" />
+              {profilePic ? (
+                <img
+                  src={profilePic}
+                  alt="Profile"
+                  className="w-32 h-32 rounded-full object-cover"
+                />
+              ) : (
+                <FaUserCircle className="w-32 h-32 text-gray-400" />
+              )}
             </div>
           </div>
 
           {/* User Information */}
           <div className="text-center mb-6">
             <h1 className="text-3xl font-bold text-blue-400">Admin Profile</h1>
-            <p className="text-gray-600">Manage your account details here.</p>
           </div>
 
           {/* Address Section */}
@@ -56,10 +92,11 @@ const AdminProfile = ({ address, ethBalance }) => {
 
           {/* Role Section */}
           <div className="mb-6">
-            <label className="block text-gray-700 font-medium mb-2">Role:</label>
+            <label className="block text-gray-700 font-medium mb-2">
+              Role:
+            </label>
             <p className="bg-gray-100 p-4 rounded-lg text-gray-700">Admin</p>
           </div>
-  
         </div>
       </div>
     </div>
